@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ATR131" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7c2462b6-50be-44b3-854b-74bb9a6f964d">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ATR131" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7c2462b6-50be-44b3-854b-74bb9a6f964d">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 	<property name="ireport.jasperserver.url" value="http://10.99.1.192:8080/jasperserver/"/>
 	<property name="ireport.jasperserver.user" value="syazwan|upsidev"/>
 	<property name="ireport.jasperserver.report.resource" value="/Reports/MyHRIS/HRA_AT/ATR131_files/main_jrxml"/>
@@ -53,42 +53,45 @@
 	</subDataset>
 	<subDataset name="PENILAIAN_PENYELIA" uuid="2f586338-0c37-4a9a-b366-c44fd668f21f">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT TAC_ORDERING,
-TAC_DESC,
-TAS_DESC||' : 'TAS_DESC,
-TAS_CODE
+			<![CDATA[SELECT TAC_ORDERING AS "TAC_ORDERING",
+TAC_DESC AS "TAC_DESC",
+TAS_DESC||' : ' AS "TAS_DESC",
+TAS_CODE AS "TAS_CODE"
 FROM TRAINING_ASSESSMENT_CATEGORY,TRAINING_ASSESSMENT_SETUP
 WHERE TAC_CODE = '8'
 AND TAS_CATEGORY = TAC_CODE
 AND TAS_TYPE = 'EFFECTIVENESS'
 ORDER BY TAS_ORDERING]]>
 		</queryString>
-		<field name="TAC_ORDERING" class="java.math.BigDecimal">
+		<field name="TAC_ORDERING" class="java.lang.Integer">
 			<property name="com.jaspersoft.studio.field.label" value="TAC_ORDERING"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_category"/>
 		</field>
 		<field name="TAC_DESC" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TAC_DESC"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_category"/>
 		</field>
 		<field name="TAS_DESC" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TAS_DESC"/>
 		</field>
 		<field name="TAS_CODE" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TAS_CODE"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_setup"/>
 		</field>
 	</subDataset>
 	<subDataset name="BEFORE" uuid="90ef6319-00a1-4214-9aa9-5aa65ab17734">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="TAS_CODE" class="java.lang.String"/>
 		<parameter name="TET_CODE" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT STE_MARK_BEFORE
+			<![CDATA[SELECT STE_MARK_BEFORE AS "STE_MARK_BEFORE"
 FROM STAFF_TRAINING_EFFECTIVENESS
 WHERE STE_STAFF_ID = $P{STAFFID}
 AND STE_TRAINING_REFID = $P{REFID}
@@ -96,23 +99,24 @@ AND STE_TYPE = '9'
 AND STE_CODE = $P{TAS_CODE} 
 AND STE_TITLE = $P{TET_CODE}]]>
 		</queryString>
-		<field name="STE_MARK_BEFORE" class="java.math.BigDecimal">
+		<field name="STE_MARK_BEFORE" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="STE_MARK_BEFORE"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_effectiveness"/>
 		</field>
 	</subDataset>
 	<subDataset name="PENILAIAN_KENDIRI" uuid="62485ab5-58ee-40ca-a2a9-3335444e96f7">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT TAC_ORDERING,
-TAC_DESC,
-TET_CODE||' '||TET_DESC DESCRIPTION,
-TAS_DESC,
-TAS_CODE,
-TET_CODE,
-TAS_NUMBERING
+			<![CDATA[SELECT TAC_ORDERING AS "TAC_ORDERING",
+TAC_DESC AS "TAC_DESC",
+TET_CODE||' '||TET_DESC AS "DESCRIPTION",
+TAS_DESC AS "TAS_DESC",
+TAS_CODE AS "TAS_CODE",
+TET_CODE AS "TET_CODE",
+TAS_NUMBERING AS "TAS_NUMBERING"
 FROM TRAINING_ASSESSMENT_CATEGORY,TRAINING_EVALUATION_TITLE,TRAINING_ASSESSMENT_SETUP
 WHERE TET_CATEGORY = TAC_CODE
 AND TAC_CODE = '7'
@@ -121,26 +125,32 @@ AND TAS_TITLE = TET_CODE
 AND TAS_TYPE = 'EFFECTIVENESS'
 ORDER BY TET_ORDERING,TAS_ORDERING]]>
 		</queryString>
-		<field name="TAC_ORDERING" class="java.math.BigDecimal">
+		<field name="TAC_ORDERING" class="java.lang.Integer">
 			<property name="com.jaspersoft.studio.field.label" value="TAC_ORDERING"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_category"/>
 		</field>
 		<field name="TAC_DESC" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TAC_DESC"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_category"/>
 		</field>
 		<field name="DESCRIPTION" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="DESCRIPTION"/>
 		</field>
 		<field name="TAS_DESC" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TAS_DESC"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_setup"/>
 		</field>
 		<field name="TAS_CODE" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TAS_CODE"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_setup"/>
 		</field>
 		<field name="TET_CODE" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TET_CODE"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_evaluation_title"/>
 		</field>
 		<field name="TAS_NUMBERING" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TAS_NUMBERING"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_setup"/>
 		</field>
 		<variable name="TAS_CODE" class="java.lang.String">
 			<variableExpression><![CDATA[$F{TAS_CODE}]]></variableExpression>
@@ -154,13 +164,13 @@ ORDER BY TET_ORDERING,TAS_ORDERING]]>
 	</subDataset>
 	<subDataset name="AFTER" uuid="a207aa7a-b2b5-472a-b3e0-550d00825d65">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="TAS_CODE" class="java.lang.String"/>
 		<parameter name="TET_CODE" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT STE_MARK_AFTER
+			<![CDATA[SELECT STE_MARK_AFTER AS "STE_MARK_AFTER"
 FROM STAFF_TRAINING_EFFECTIVENESS
 WHERE STE_STAFF_ID = $P{STAFFID}
 AND STE_TRAINING_REFID = $P{REFID}
@@ -168,17 +178,18 @@ AND STE_TYPE = '9'
 AND STE_CODE = $P{TAS_CODE} 
 AND STE_TITLE = $P{TET_CODE}]]>
 		</queryString>
-		<field name="STE_MARK_AFTER" class="java.math.BigDecimal">
+		<field name="STE_MARK_AFTER" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="STE_MARK_AFTER"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_effectiveness"/>
 		</field>
 	</subDataset>
 	<subDataset name="DISTINCT_PK" uuid="a550bbbc-78cf-4038-a386-c927a02f2300">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<queryString language="SQL">
 			<![CDATA[SELECT DISTINCT
-TAC_ORDERING,
-TAC_DESC
+TAC_ORDERING AS "TAC_ORDERING",
+TAC_DESC AS "TAC_DESC"
 FROM TRAINING_ASSESSMENT_CATEGORY,TRAINING_EVALUATION_TITLE,TRAINING_ASSESSMENT_SETUP
 WHERE TET_CATEGORY = TAC_CODE
 AND TAC_CODE = '7'
@@ -186,21 +197,23 @@ AND TAS_CATEGORY = TAC_CODE
 AND TAS_TITLE = TET_CODE
 AND TAS_TYPE = 'EFFECTIVENESS']]>
 		</queryString>
-		<field name="TAC_ORDERING" class="java.math.BigDecimal">
+		<field name="TAC_ORDERING" class="java.lang.Integer">
 			<property name="com.jaspersoft.studio.field.label" value="TAC_ORDERING"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_category"/>
 		</field>
 		<field name="TAC_DESC" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TAC_DESC"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_assessment_category"/>
 		</field>
 	</subDataset>
 	<subDataset name="REMARK" uuid="03893207-295b-4926-9639-c33817c39d10">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="TAS_CODE2" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT STE_REMARK
+			<![CDATA[SELECT STE_REMARK AS "STE_REMARK"
 FROM STAFF_TRAINING_EFFECTIVENESS
 WHERE STE_STAFF_ID = $P{STAFFID} 
 AND STE_TRAINING_REFID = $P{REFID}
@@ -209,17 +222,18 @@ AND STE_CODE = $P{TAS_CODE2}]]>
 		</queryString>
 		<field name="STE_REMARK" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="STE_REMARK"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_effectiveness"/>
 		</field>
 	</subDataset>
 	<subDataset name="SATU" uuid="3957a7f7-1c49-47ab-9d39-318307da5dc4">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="TAS_CODE" class="java.lang.String"/>
 		<parameter name="TET_CODE" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT STE_MARK_AFTER
+			<![CDATA[SELECT STE_MARK_AFTER AS "STE_MARK_AFTER"
 FROM STAFF_TRAINING_EFFECTIVENESS
 WHERE STE_STAFF_ID = $P{STAFFID} 
 AND STE_TRAINING_REFID = $P{REFID} 
@@ -228,19 +242,20 @@ AND STE_CODE = $P{TAS_CODE}
 AND STE_TITLE = $P{TET_CODE} 
 AND STE_MARK_AFTER = '1']]>
 		</queryString>
-		<field name="STE_MARK_AFTER" class="java.math.BigDecimal">
+		<field name="STE_MARK_AFTER" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="STE_MARK_AFTER"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_effectiveness"/>
 		</field>
 	</subDataset>
 	<subDataset name="DUA" uuid="46a4c454-11d4-4fdc-b0cc-643af1c0ab4b">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="TAS_CODE" class="java.lang.String"/>
 		<parameter name="TET_CODE" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT STE_MARK_AFTER
+			<![CDATA[SELECT STE_MARK_AFTER AS "STE_MARK_AFTER"
 FROM STAFF_TRAINING_EFFECTIVENESS
 WHERE STE_STAFF_ID = $P{STAFFID} 
 AND STE_TRAINING_REFID = $P{REFID} 
@@ -249,19 +264,20 @@ AND STE_CODE = $P{TAS_CODE}
 AND STE_TITLE = $P{TET_CODE} 
 AND STE_MARK_AFTER = '2']]>
 		</queryString>
-		<field name="STE_MARK_AFTER" class="java.math.BigDecimal">
+		<field name="STE_MARK_AFTER" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="STE_MARK_AFTER"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_effectiveness"/>
 		</field>
 	</subDataset>
 	<subDataset name="TIGA" uuid="0838cc90-cf44-4a25-9221-9d245ef54dfc">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="TAS_CODE" class="java.lang.String"/>
 		<parameter name="TET_CODE" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT STE_MARK_AFTER
+			<![CDATA[SELECT STE_MARK_AFTER AS "STE_MARK_AFTER"
 FROM STAFF_TRAINING_EFFECTIVENESS
 WHERE STE_STAFF_ID = $P{STAFFID} 
 AND STE_TRAINING_REFID = $P{REFID} 
@@ -270,19 +286,20 @@ AND STE_CODE = $P{TAS_CODE}
 AND STE_TITLE = $P{TET_CODE} 
 AND STE_MARK_AFTER = '3']]>
 		</queryString>
-		<field name="STE_MARK_AFTER" class="java.math.BigDecimal">
+		<field name="STE_MARK_AFTER" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="STE_MARK_AFTER"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_effectiveness"/>
 		</field>
 	</subDataset>
 	<subDataset name="EMPAT" uuid="b012ff90-4c76-4d20-9c82-acf34e9cc37f">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="TAS_CODE" class="java.lang.String"/>
 		<parameter name="TET_CODE" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT STE_MARK_AFTER
+			<![CDATA[SELECT STE_MARK_AFTER AS "STE_MARK_AFTER"
 FROM STAFF_TRAINING_EFFECTIVENESS
 WHERE STE_STAFF_ID = $P{STAFFID} 
 AND STE_TRAINING_REFID = $P{REFID} 
@@ -291,19 +308,20 @@ AND STE_CODE = $P{TAS_CODE}
 AND STE_TITLE = $P{TET_CODE} 
 AND STE_MARK_AFTER = '4']]>
 		</queryString>
-		<field name="STE_MARK_AFTER" class="java.math.BigDecimal">
+		<field name="STE_MARK_AFTER" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="STE_MARK_AFTER"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_effectiveness"/>
 		</field>
 	</subDataset>
 	<subDataset name="LIMA" uuid="d72ee824-b539-4fcf-bceb-355bf5c7dc5b">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="STAFFID" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="TAS_CODE" class="java.lang.String"/>
 		<parameter name="TET_CODE" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT STE_MARK_AFTER
+			<![CDATA[SELECT STE_MARK_AFTER AS "STE_MARK_AFTER"
 FROM STAFF_TRAINING_EFFECTIVENESS
 WHERE STE_STAFF_ID = $P{STAFFID} 
 AND STE_TRAINING_REFID = $P{REFID} 
@@ -312,24 +330,25 @@ AND STE_CODE = $P{TAS_CODE}
 AND STE_TITLE = $P{TET_CODE} 
 AND STE_MARK_AFTER = '5']]>
 		</queryString>
-		<field name="STE_MARK_AFTER" class="java.math.BigDecimal">
+		<field name="STE_MARK_AFTER" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="STE_MARK_AFTER"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_effectiveness"/>
 		</field>
 	</subDataset>
 	<parameter name="REFID" class="java.lang.String"/>
 	<parameter name="STAFFID" class="java.lang.String"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT SM_STAFF_NAME,
-SS_SERVICE_DESC,
-SM_STAFF_ID,
-TH_TRAINING_TITLE,TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy')TH_DATE,
-STH_TRAINING_REFID,
-STH_EVALUATOR_ID,
-GET_STAFF_NAME(STH_EVALUATOR_ID) AS STH_EVALUATOR_NAME,
-TO_CHAR(STH_EVALUATION_DATE,'dd/mm/yyyy') STH_EVALUATION_DATE
+		<![CDATA[SELECT SM_STAFF_NAME AS "SM_STAFF_NAME",
+SS_SERVICE_DESC AS "SS_SERVICE_DESC",
+SM_STAFF_ID AS "SM_STAFF_ID",
+TH_TRAINING_TITLE AS "TH_TRAINING_TITLE",TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy') AS "TH_DATE",
+STH_TRAINING_REFID AS "STH_TRAINING_REFID",
+STH_EVALUATOR_ID AS "STH_EVALUATOR_ID",
+GET_STAFF_NAME(STH_EVALUATOR_ID) AS "STH_EVALUATOR_NAME",
+TO_CHAR(STH_EVALUATION_DATE,'dd/mm/yyyy') AS "STH_EVALUATION_DATE"
 FROM STAFF_MAIN,SERVICE_SCHEME,TRAINING_HEAD_DETL,TRAINING_HEAD,STAFF_TRAINING_HEAD
 WHERE SM_JOB_CODE = SS_SERVICE_CODE
-AND NVL(THD_EVALUATION,'N') = 'Y'
+AND COALESCE(THD_EVALUATION,'N') = 'Y'
 AND TH_REF_ID = THD_REF_ID
 AND STH_TRAINING_REFID = TH_REF_ID
 AND STH_STAFF_ID = SM_STAFF_ID
@@ -340,24 +359,30 @@ AND STH_TRAINING_REFID =  $P{REFID}]]>
 	</queryString>
 	<field name="SM_STAFF_NAME" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SM_STAFF_NAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="staff_main"/>
 	</field>
 	<field name="SS_SERVICE_DESC" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SS_SERVICE_DESC"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="service_scheme"/>
 	</field>
 	<field name="SM_STAFF_ID" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SM_STAFF_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="staff_main"/>
 	</field>
 	<field name="TH_TRAINING_TITLE" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="TH_TRAINING_TITLE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="training_head"/>
 	</field>
 	<field name="TH_DATE" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="TH_DATE"/>
 	</field>
 	<field name="STH_TRAINING_REFID" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="STH_TRAINING_REFID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_head"/>
 	</field>
 	<field name="STH_EVALUATOR_ID" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="STH_EVALUATOR_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="staff_training_head"/>
 	</field>
 	<field name="STH_EVALUATOR_NAME" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="STH_EVALUATOR_NAME"/>
@@ -395,7 +420,7 @@ AND STH_TRAINING_REFID =  $P{REFID}]]>
 				</staticText>
 				<image>
 					<reportElement x="0" y="0" width="150" height="75" uuid="bcb66490-26d2-4700-b485-1a8fdf005df3"/>
-					<imageExpression><![CDATA["D:\\UPSIDev\\JaspersoftWorkspace_6_10\\MyReports\\MyHRIS@dev-1\\Reports\\Image\\logo_upsi.png"]]></imageExpression>
+					<imageExpression><![CDATA["/MyHRIS_PG_ExternalTraining/Logo_UPSI_ORI.png"]]></imageExpression>
 				</image>
 			</frame>
 			<frame>
@@ -1335,7 +1360,7 @@ AND STH_TRAINING_REFID =  $P{REFID}]]>
 			</staticText>
 			<image>
 				<reportElement x="370" y="0" width="155" height="30" uuid="1833fb44-462f-4ee5-bb82-80fa9fc41cfb"/>
-				<imageExpression><![CDATA["repo:/Reports/Image/LOGO_ISO_9001_2015_QMS_02816.jpg"]]></imageExpression>
+				<imageExpression><![CDATA["/MyHRIS_PG_ExternalTraining/LOGO_ISO_9001_2015_QMS_02816.jpg"]]></imageExpression>
 			</image>
 		</band>
 	</lastPageFooter>

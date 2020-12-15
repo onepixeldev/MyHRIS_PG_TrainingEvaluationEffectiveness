@@ -856,7 +856,7 @@ AND STH_TRAINING_REFID =  $P{REFID}]]>
 													<font fontName="Arial" size="9" isBold="false"/>
 													<paragraph leftIndent="0" spacingBefore="4" spacingAfter="0"/>
 												</textElement>
-												<textFieldExpression><![CDATA[$F{STE_MARK_BEFORE}]]></textFieldExpression>
+												<textFieldExpression><![CDATA[Math.round($F{STE_MARK_BEFORE})]]></textFieldExpression>
 											</textField>
 										</jr:listContents>
 									</jr:list>
@@ -906,7 +906,7 @@ AND STH_TRAINING_REFID =  $P{REFID}]]>
 													<font fontName="Arial" size="9" isBold="false"/>
 													<paragraph leftIndent="0" spacingBefore="4" spacingAfter="0"/>
 												</textElement>
-												<textFieldExpression><![CDATA[$F{STE_MARK_AFTER}]]></textFieldExpression>
+												<textFieldExpression><![CDATA[Math.round($F{STE_MARK_AFTER})]]></textFieldExpression>
 											</textField>
 										</jr:listContents>
 									</jr:list>
