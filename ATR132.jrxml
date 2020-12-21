@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ATR132" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f72d0246-f0e3-4ad5-9775-5097e3a664fc">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 	<property name="ireport.jasperserver.url" value="http://10.99.1.192:8080/jasperserver/"/>
 	<property name="ireport.jasperserver.user" value="syazwan|upsidev"/>
 	<property name="ireport.jasperserver.report.resource" value="/Reports/MyHRIS/HRA_AT/ATR132_files/main_jrxml"/>
@@ -144,24 +144,26 @@
 	</style>
 	<subDataset name="TRAINING_LIST" uuid="740c3961-a4fb-4739-a095-5a498ba49a99">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT TH_REF_ID,
-TH_TRAINING_TITLE,
-TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy')TH_DATE
+			<![CDATA[SELECT TH_REF_ID AS "TH_REF_ID",
+TH_TRAINING_TITLE AS "TH_TRAINING_TITLE",
+TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy') AS "TH_DATE"
 FROM TRAINING_HEAD,TRAINING_HEAD_DETL
 WHERE TH_REF_ID = THD_REF_ID
-AND NVL(THD_EVALUATION,'N') = 'Y'
+AND COALESCE(THD_EVALUATION,'N') = 'Y'
 AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))]]>
 		</queryString>
 		<field name="TH_REF_ID" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TH_REF_ID"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_head"/>
 		</field>
 		<field name="TH_TRAINING_TITLE" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TH_TRAINING_TITLE"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_head"/>
 		</field>
 		<field name="TH_DATE" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TH_DATE"/>
@@ -172,16 +174,16 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	</subDataset>
 	<subDataset name="COUNT_SUBMIT_REPORT" uuid="6b9c441c-2481-484b-9691-360327ce5808">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(1) COUNT_SUBMIT, '' DUMMY FROM
+			<![CDATA[SELECT COUNT(STH_STAFF_ID) AS "COUNT_SUBMIT", '' AS "DUMMY" FROM
 (
     SELECT STH_STAFF_ID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
 	AND STH_TRAINING_REFID = $P{REFID} 
     AND STH_STATUS = 'APPROVE'
     AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
@@ -190,7 +192,7 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
     AND STH_TRAINING_REFID = $P{REFID}
     AND STH_STATUS = 'APPROVE'
     AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
@@ -198,7 +200,7 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD,STAFF_TRAINING_DETL
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
     AND STH_TRAINING_REFID = $P{REFID}
     AND STH_STATUS = 'APPROVE'
     AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
@@ -207,9 +209,9 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     AND STH_TRAINING_REFID = STD_TRAINING_REFID
     AND STH_STAFF_ID = STD_STAFF_ID
     AND STD_ATTEND IN ('Y','A')
-)]]>
+) AS TBL1]]>
 		</queryString>
-		<field name="COUNT_SUBMIT" class="java.math.BigDecimal">
+		<field name="COUNT_SUBMIT" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="COUNT_SUBMIT"/>
 		</field>
 		<field name="DUMMY" class="java.lang.String">
@@ -221,16 +223,16 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	</subDataset>
 	<subDataset name="COUNT_NOT_SUBMIT_REPORT" uuid="e8f33910-1087-4739-b8ac-38b8034c2a9f">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(1) COUNT_NOT_SUBMIT, '' DUMMY FROM
+			<![CDATA[SELECT COUNT(STH_STAFF_ID) AS "COUNT_NOT_SUBMIT", '' AS "DUMMY" FROM
 (
     SELECT STH_STAFF_ID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID = $P{REFID} 
     AND STH_STATUS = 'APPROVE'
     AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
@@ -239,7 +241,7 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID = $P{REFID}
     AND STH_STATUS = 'APPROVE'
     AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
@@ -247,7 +249,7 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD,STAFF_TRAINING_DETL
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID = $P{REFID}
     AND STH_STATUS = 'APPROVE'
     AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
@@ -256,9 +258,9 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     AND STH_TRAINING_REFID = STD_TRAINING_REFID
     AND STH_STAFF_ID = STD_STAFF_ID
     AND STD_ATTEND IN ('Y','A')
-)]]>
+) AS TBL1]]>
 		</queryString>
-		<field name="COUNT_NOT_SUBMIT" class="java.math.BigDecimal">
+		<field name="COUNT_NOT_SUBMIT" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="COUNT_NOT_SUBMIT"/>
 		</field>
 		<field name="DUMMY" class="java.lang.String">
@@ -270,24 +272,24 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	</subDataset>
 	<subDataset name="COUNT_ALL" uuid="10794da3-4297-434f-bbe6-4e8c2dd984df">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="C_SUBMIT" class="java.math.BigDecimal"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(1) COUNT_ALL
+			<![CDATA[SELECT COUNT(TH_REF_ID) AS "COUNT_ALL"
 FROM TRAINING_HEAD,TRAINING_HEAD_DETL,STAFF_TRAINING_HEAD
 WHERE TH_REF_ID = THD_REF_ID
 AND TH_REF_ID = STH_TRAINING_REFID
-AND NVL(THD_EVALUATION,'N') = 'Y'
+AND COALESCE(THD_EVALUATION,'N') = 'Y'
 AND TH_STATUS = 'APPROVE'
 AND STH_STATUS = 'APPROVE'
 AND STH_TRAINING_REFID = $P{REFID} 
 AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))]]>
 		</queryString>
-		<field name="COUNT_ALL" class="java.math.BigDecimal">
+		<field name="COUNT_ALL" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="COUNT_ALL"/>
 		</field>
 		<variable name="PERCENT" class="java.lang.Double">
@@ -299,24 +301,24 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	</subDataset>
 	<subDataset name="COUNT_ALL2" uuid="31bacdfc-2350-4b72-a9fb-64cf4e46706a">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="C_NSUBMIT" class="java.math.BigDecimal"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(1) COUNT_ALL
+			<![CDATA[SELECT COUNT(TH_REF_ID) AS "COUNT_ALL"
 FROM TRAINING_HEAD,TRAINING_HEAD_DETL,STAFF_TRAINING_HEAD
 WHERE TH_REF_ID = THD_REF_ID
 AND TH_REF_ID = STH_TRAINING_REFID
-AND NVL(THD_EVALUATION,'N') = 'Y'
+AND COALESCE(THD_EVALUATION,'N') = 'Y'
 AND TH_STATUS = 'APPROVE'
 AND STH_STATUS = 'APPROVE'
 AND STH_TRAINING_REFID = $P{REFID} 
 AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))]]>
 		</queryString>
-		<field name="COUNT_ALL" class="java.math.BigDecimal">
+		<field name="COUNT_ALL" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="COUNT_ALL"/>
 		</field>
 		<variable name="PERCENT" class="java.lang.Double">
@@ -329,20 +331,20 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	</subDataset>
 	<subDataset name="SUM_SUBMIT" uuid="0c037d87-8197-4984-a6a7-b6bbda0eedb8">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(1) SUM_SUBMIT, '' DUMMY FROM
+			<![CDATA[SELECT COUNT(STH_STAFF_ID) AS "SUM_SUBMIT", '' AS "DUMMY" FROM
 (
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
 	AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -353,12 +355,12 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -368,12 +370,12 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD,STAFF_TRAINING_DETL
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -384,9 +386,9 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     AND STH_TRAINING_REFID = STD_TRAINING_REFID
     AND STH_STAFF_ID = STD_STAFF_ID
     AND STD_ATTEND IN ('Y','A')
-)]]>
+) AS TBL1]]>
 		</queryString>
-		<field name="SUM_SUBMIT" class="java.math.BigDecimal">
+		<field name="SUM_SUBMIT" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="SUM_SUBMIT"/>
 		</field>
 		<field name="DUMMY" class="java.lang.String">
@@ -395,21 +397,21 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	</subDataset>
 	<subDataset name="SUM_NSUBMIT" uuid="8962dc9d-80f7-491d-9649-f47487eb6ac6">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<parameter name="TOTAL_SUBMIT" class="java.lang.Integer"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(1) SUM_NOT_SUBMIT, '' DUMMY FROM
+			<![CDATA[SELECT COUNT(STH_STAFF_ID) AS "SUM_NOT_SUBMIT", '' "DUMMY" FROM
 (
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -420,12 +422,12 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -435,12 +437,12 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD,STAFF_TRAINING_DETL
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -451,9 +453,9 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     AND STH_TRAINING_REFID = STD_TRAINING_REFID
     AND STH_STAFF_ID = STD_STAFF_ID
     AND STD_ATTEND IN ('Y','A')
-)]]>
+) AS TBL1]]>
 		</queryString>
-		<field name="SUM_NOT_SUBMIT" class="java.math.BigDecimal">
+		<field name="SUM_NOT_SUBMIT" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="SUM_NOT_SUBMIT"/>
 		</field>
 		<field name="DUMMY" class="java.lang.String">
@@ -476,21 +478,21 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	</subDataset>
 	<subDataset name="SUM_SUBMIT2" uuid="7be4436c-d029-43d8-a23c-261db9beee36">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<parameter name="TOTAL_NSUBMIT" class="java.lang.Integer"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(1) SUM_SUBMIT, '' DUMMY FROM
+			<![CDATA[SELECT COUNT(STH_STAFF_ID) AS "SUM_SUBMIT", '' AS "DUMMY" FROM
 (
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
 	AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -501,12 +503,12 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -516,12 +518,12 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD,STAFF_TRAINING_DETL
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'Y'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'Y'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -532,9 +534,9 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     AND STH_TRAINING_REFID = STD_TRAINING_REFID
     AND STH_STAFF_ID = STD_STAFF_ID
     AND STD_ATTEND IN ('Y','A')
-)]]>
+) AS TBL1]]>
 		</queryString>
-		<field name="SUM_SUBMIT" class="java.math.BigDecimal">
+		<field name="SUM_SUBMIT" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="SUM_SUBMIT"/>
 		</field>
 		<field name="DUMMY" class="java.lang.String">
@@ -557,20 +559,20 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	</subDataset>
 	<subDataset name="SUM_NSUBMIT2" uuid="99ec22b7-6c3f-4142-9db6-1e788eef9389">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(1) SUM_NOT_SUBMIT, '' DUMMY FROM
+			<![CDATA[SELECT COUNT(STH_STAFF_ID) AS "SUM_NOT_SUBMIT", '' AS "DUMMY" FROM
 (
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -581,12 +583,12 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -596,12 +598,12 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     UNION
     SELECT STH_STAFF_ID, STH_TRAINING_REFID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD,STAFF_TRAINING_DETL
-    WHERE NVL(STH_HOD_EVALUATION,'N') = 'N'
+    WHERE COALESCE(STH_HOD_EVALUATION,'N') = 'N'
     AND STH_TRAINING_REFID IN (
     SELECT TH_REF_ID
     FROM TRAINING_HEAD,TRAINING_HEAD_DETL
     WHERE TH_REF_ID = THD_REF_ID
-    AND NVL(THD_EVALUATION,'N') = 'Y'
+    AND COALESCE(THD_EVALUATION,'N') = 'Y'
     AND TH_STATUS = 'APPROVE' AND ($P{MONTH2} IS NULL OR ($P{MONTH2} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'mm') = $P{MONTH2}))
 	AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{YEAR}))
     )
@@ -612,9 +614,9 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     AND STH_TRAINING_REFID = STD_TRAINING_REFID
     AND STH_STAFF_ID = STD_STAFF_ID
     AND STD_ATTEND IN ('Y','A')
-)]]>
+) AS TBL1]]>
 		</queryString>
-		<field name="SUM_NOT_SUBMIT" class="java.math.BigDecimal">
+		<field name="SUM_NOT_SUBMIT" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="SUM_NOT_SUBMIT"/>
 		</field>
 		<field name="DUMMY" class="java.lang.String">
@@ -629,8 +631,11 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 	<parameter name="MONTH2" class="java.lang.String"/>
 	<parameter name="YEAR" class="java.lang.String"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT * FROM DUAL]]>
+		<![CDATA[SELECT '' AS "DUMMY"]]>
 	</queryString>
+	<field name="DUMMY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DUMMY"/>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>

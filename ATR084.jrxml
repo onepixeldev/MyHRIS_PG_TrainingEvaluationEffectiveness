@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ATR084" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="762" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20" uuid="2a40318e-04ab-4ba3-a623-53213c7eddb7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ATR084" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="762" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20" uuid="2a40318e-04ab-4ba3-a623-53213c7eddb7">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 	<property name="ireport.jasperserver.url" value="http://10.99.1.192:8080/jasperserver/"/>
 	<property name="ireport.jasperserver.user" value="syazwan|upsidev"/>
 	<property name="ireport.jasperserver.report.resource" value="/Reports/MyHRIS/HRA_AT/ATR084_files/main_jrxml"/>
@@ -16,6 +16,8 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="290"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="705"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -177,39 +179,71 @@ ORDER BY TH_DATE, SM_DEPT_CODE, SS_RANK_KUMPP, SS_SERVICE_KUMPP, SS_SALARY_GRADE
 	<parameter name="P_TRAINING_DATE" class="java.lang.String"/>
 	<parameter name="P_REF_ID" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT TH_REF_ID,
-UPPER(TH_TRAINING_TITLE) TH_TRAINING_TITLE, 
+		<![CDATA[SELECT
+TH_REF_ID AS "TH_REF_ID",
+UPPER(TH_TRAINING_TITLE) AS "TH_TRAINING_TITLE", 
 TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||
-TO_CHAR(TH_DATE_TO,'dd/mm/yyyy') TH_DATE, 
-UPPER(DECODE(TH_TRAINING_VENUE,NULL,'',TH_TRAINING_VENUE)||DECODE(TH_TRAINING_STATE,NULL,'',', '||STATE_MAIN.SM_STATE_DESC)||
-DECODE(TH_TRAINING_COUNTRY,NULL,'',', '||COUNTRY_MAIN.CM_COUNTRY_DESC)) TH_TRAINING_VENUE,
-SM_STAFF_ID, TM_TITLE_DESC||' '||SM_STAFF_NAME SM_STAFF_NAME, 
-NVL(SM_ADMIN_DEPT,SM_DEPT_CODE) SM_DEPT_CODE, DM_DEPT_DESC,
-SS_DESC_SHORT, SS_SERVICE_DESC, 
-TO_CHAR(TMH_SEND_DATE,'dd/mm/yyyy') SENT_DATE, TMH_SEND_BY,
-TMH_SEQ, SS_SALARY_GRADE,SS_RANK_KUMPP,SS_SERVICE_KUMPP
-FROM TRAINING_HEAD, TRAINING_MEMO_HISTORY,
-TRAINING_MEMO_HIS_STAFF, STAFF_MAIN, SERVICE_SCHEME, TITLE_MAIN,
-COUNTRY_MAIN,STATE_MAIN,DEPARTMENT_MAIN
-WHERE TH_REF_ID = TMH_TRAINING_REFID
-AND TMH_MEMO_ID = TMHS_MEMO_ID
-AND TMHS_RECEIVE_BY = SM_STAFF_ID
-AND SM_STAS_TITLE = TM_TITLE_CODE
-AND SM_JOB_CODE = SS_SERVICE_CODE
-AND TH_TRAINING_COUNTRY = CM_COUNTRY_CODE
-AND SM_DEPT_CODE = DM_DEPT_CODE
-AND TH_TRAINING_STATE = SM_STATE_CODE(+)
-AND TMH_MODULE = 'ASSIGN_TRAINING'
+TO_CHAR(TH_DATE_TO,'dd/mm/yyyy') AS "TH_DATE",
+CASE 
+WHEN TH_TRAINING_VENUE IS NULL AND TH_TRAINING_STATE IS NOT NULL AND TH_TRAINING_COUNTRY IS NOT NULL
+THEN ', '||STATE_MAIN.SM_STATE_DESC||COUNTRY_MAIN.CM_COUNTRY_DESC
+WHEN TH_TRAINING_VENUE IS NOT NULL AND TH_TRAINING_STATE IS NULL AND TH_TRAINING_COUNTRY IS NOT NULL
+THEN TH_TRAINING_VENUE||', '||COUNTRY_MAIN.CM_COUNTRY_DESC
+WHEN TH_TRAINING_VENUE IS NOT NULL AND TH_TRAINING_STATE IS NOT NULL AND TH_TRAINING_COUNTRY IS NULL
+THEN TH_TRAINING_VENUE||STATE_MAIN.SM_STATE_DESC||''
+WHEN TH_TRAINING_VENUE IS NULL AND TH_TRAINING_STATE IS NULL AND TH_TRAINING_COUNTRY IS NOT NULL
+THEN ', '||COUNTRY_MAIN.CM_COUNTRY_DESC
+WHEN TH_TRAINING_VENUE IS NULL AND TH_TRAINING_STATE IS NOT NULL AND TH_TRAINING_COUNTRY IS NULL
+THEN ', '||STATE_MAIN.SM_STATE_DESC
+WHEN TH_TRAINING_VENUE IS NOT NULL AND TH_TRAINING_STATE IS NULL AND TH_TRAINING_COUNTRY IS NULL
+THEN TH_TRAINING_VENUE
+WHEN TH_TRAINING_VENUE IS NULL AND TH_TRAINING_STATE IS NULL AND TH_TRAINING_COUNTRY IS NULL
+THEN ''
+WHEN TH_TRAINING_VENUE IS NOT NULL AND TH_TRAINING_STATE IS NOT NULL AND TH_TRAINING_COUNTRY IS NOT NULL
+THEN UPPER(TH_TRAINING_VENUE||', '||STATE_MAIN.SM_STATE_DESC||', '||COUNTRY_MAIN.CM_COUNTRY_DESC)
+END AS
+"TH_TRAINING_VENUE",
+SM_STAFF_ID AS "SM_STAFF_ID", 
+TM_TITLE_DESC||' '||SM_STAFF_NAME AS "SM_STAFF_NAME", 
+COALESCE(SM_ADMIN_DEPT,SM_DEPT_CODE) AS "SM_DEPT_CODE", 
+DM_DEPT_DESC AS "DM_DEPT_DESC",
+SS_DESC_SHORT AS "SS_DESC_SHORT", 
+SS_SERVICE_DESC AS "SS_SERVICE_DESC", 
+TO_CHAR(TMH_SEND_DATE,'dd/mm/yyyy') AS "SENT_DATE", 
+TMH_SEND_BY AS "TMH_SEND_BY",
+TMH_SEQ AS "TMH_SEQ", 
+SS_SALARY_GRADE AS "SS_SALARY_GRADE",
+SS_RANK_KUMPP AS "SS_RANK_KUMPP",
+SS_SERVICE_KUMPP AS "SS_SERVICE_KUMPP"
+FROM TRAINING_HEAD
+FULL OUTER JOIN TRAINING_MEMO_HISTORY
+ON TH_REF_ID = TMH_TRAINING_REFID
+FULL OUTER JOIN TRAINING_MEMO_HIS_STAFF
+ON TMH_MEMO_ID = TMHS_MEMO_ID 
+FULL OUTER JOIN STAFF_MAIN
+ON TMHS_RECEIVE_BY = SM_STAFF_ID
+FULL OUTER JOIN SERVICE_SCHEME
+ON SM_JOB_CODE = SS_SERVICE_CODE
+FULL OUTER JOIN TITLE_MAIN
+ON SM_STAS_TITLE = TM_TITLE_CODE
+FULL OUTER JOIN COUNTRY_MAIN
+ON TH_TRAINING_COUNTRY = CM_COUNTRY_CODE
+FULL OUTER JOIN STATE_MAIN
+ON TH_TRAINING_STATE = SM_STATE_CODE
+FULL OUTER JOIN DEPARTMENT_MAIN
+ON SM_DEPT_CODE = DM_DEPT_CODE
+WHERE TMH_MODULE = 'ASSIGN_TRAINING'
 AND ($P{P_STAFF_ID} IS NULL OR ($P{P_STAFF_ID} IS NOT NULL AND SM_STAFF_ID = $P{P_STAFF_ID}))
 AND ($P{P_DEPT_CODE} IS NULL OR ($P{P_DEPT_CODE} IS NOT NULL AND SM_DEPT_CODE = $P{P_DEPT_CODE}))
 AND ($P{P_YEAR} IS NULL OR ($P{P_YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') = $P{P_YEAR}))
 AND ($P{P_TRAINING_DATE} IS NULL OR ($P{P_TRAINING_DATE} IS NOT NULL 
 AND (TO_DATE($P{P_TRAINING_DATE},'dd/mm/yyyy') BETWEEN TH_DATE_FROM AND TH_DATE_TO)))
 AND ($P{P_REF_ID} IS NULL OR ($P{P_REF_ID} IS NOT NULL AND TH_REF_ID = $P{P_REF_ID}))
-ORDER BY TH_DATE, SM_DEPT_CODE, SS_RANK_KUMPP, SS_SERVICE_KUMPP, SS_SALARY_GRADE DESC]]>
+ORDER BY "TH_DATE", SM_DEPT_CODE, SS_RANK_KUMPP, SS_SERVICE_KUMPP, SS_SALARY_GRADE DESC]]>
 	</queryString>
 	<field name="TH_REF_ID" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="TH_REF_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="training_head"/>
 	</field>
 	<field name="TH_TRAINING_TITLE" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="TH_TRAINING_TITLE"/>
@@ -222,6 +256,7 @@ ORDER BY TH_DATE, SM_DEPT_CODE, SS_RANK_KUMPP, SS_SERVICE_KUMPP, SS_SALARY_GRADE
 	</field>
 	<field name="SM_STAFF_ID" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SM_STAFF_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="staff_main"/>
 	</field>
 	<field name="SM_STAFF_NAME" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SM_STAFF_NAME"/>
@@ -231,32 +266,40 @@ ORDER BY TH_DATE, SM_DEPT_CODE, SS_RANK_KUMPP, SS_SERVICE_KUMPP, SS_SALARY_GRADE
 	</field>
 	<field name="DM_DEPT_DESC" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="DM_DEPT_DESC"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="department_main"/>
 	</field>
 	<field name="SS_DESC_SHORT" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SS_DESC_SHORT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="service_scheme"/>
 	</field>
 	<field name="SS_SERVICE_DESC" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SS_SERVICE_DESC"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="service_scheme"/>
 	</field>
 	<field name="SENT_DATE" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SENT_DATE"/>
 	</field>
 	<field name="TMH_SEND_BY" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="TMH_SEND_BY"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="training_memo_history"/>
 	</field>
-	<field name="TMH_SEQ" class="java.math.BigDecimal">
+	<field name="TMH_SEQ" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="TMH_SEQ"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="training_memo_history"/>
 	</field>
 	<field name="SS_SALARY_GRADE" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SS_SALARY_GRADE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="service_scheme"/>
 	</field>
-	<field name="SS_RANK_KUMPP" class="java.math.BigDecimal">
+	<field name="SS_RANK_KUMPP" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.label" value="SS_RANK_KUMPP"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="service_scheme"/>
 	</field>
 	<field name="SS_SERVICE_KUMPP" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="SS_SERVICE_KUMPP"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="service_scheme"/>
 	</field>
-	<group name="Group1" isReprintHeaderOnEachPage="true">
+	<group name="Group1" isReprintHeaderOnEachPage="true" preventOrphanFooter="true">
 		<groupExpression><![CDATA[$F{TH_REF_ID}]]></groupExpression>
 		<groupHeader>
 			<band height="25">
