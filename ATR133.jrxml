@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ATR133" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c5e4d3ae-4298-4ee9-a28a-6ac8159c8ae5">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 	<property name="ireport.jasperserver.url" value="http://10.99.1.192:8080/jasperserver/"/>
 	<property name="ireport.jasperserver.user" value="syazwan|upsidev"/>
 	<property name="ireport.jasperserver.report.resource" value="/Reports/MyHRIS/HRA_AT/ATR133_files/main_jrxml"/>
@@ -36,82 +36,96 @@
 	</style>
 	<subDataset name="STAFF_LIST" uuid="ba869bdb-1c13-4996-81b3-2d7073fc57e8">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<queryString language="plsql">
-			<![CDATA[SELECT DISTINCT 
-STH_EVALUATOR_ID,
-GET_STAFF_NAME(STH_EVALUATOR_ID) EVA_NAME,
-STH_STAFF_ID,
-GET_STAFF_NAME(STH_STAFF_ID) STAFF_NAME,
-TH_TRAINING_TITLE,
-STH_HOD_EVALUATION,
-TO_CHAR(STH_EVALUATION_DATE,'dd/mm/yyyy')EVALUATION_DATE,
-TH_REF_ID,
-TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy')TH_DATE,
-TH_TRAINING_VENUE
-FROM TRAINING_HEAD,STAFF_TRAINING_HEAD,TRAINING_HEAD_DETL,STAFF_MAIN,STAFF_STATUS
-WHERE SM_STAFF_STATUS = SS_STATUS_CODE
-AND SS_STATUS_STS = 'ACTIVE'
-AND STH_STAFF_ID = SM_STAFF_ID
-AND STH_TRAINING_REFID = TH_REF_ID
-AND NVL(THD_EVALUATION,'N') = 'Y'
-AND THD_REF_ID = TH_REF_ID
-AND TH_STATUS = 'APPROVE'
-AND STH_STATUS = 'APPROVE'	
-AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
-AND TO_CHAR(TH_DATE_FROM,'yyyy') < '2016' 
-AND ($P{REFID} IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
-UNION
-SELECT DISTINCT 
-STH_EVALUATOR_ID,
-GET_STAFF_NAME(STH_EVALUATOR_ID) EVA_NAME,
-STH_STAFF_ID,
-GET_STAFF_NAME(STH_STAFF_ID) STAFF_NAME,
-TH_TRAINING_TITLE,
-STH_HOD_EVALUATION,
-TO_CHAR(STH_EVALUATION_DATE,'dd/mm/yyyy')EVALUATION_DATE,
-TH_REF_ID,
-TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy')TH_DATE,
-TH_TRAINING_VENUE
-FROM TRAINING_HEAD,STAFF_TRAINING_HEAD,TRAINING_HEAD_DETL,STAFF_MAIN,STAFF_STATUS
-WHERE SM_STAFF_STATUS = SS_STATUS_CODE
-AND SS_STATUS_STS = 'ACTIVE' 
-AND STH_STAFF_ID = SM_STAFF_ID
-AND STH_TRAINING_REFID = TH_REF_ID
-AND NVL(THD_EVALUATION,'N') = 'Y'
-AND THD_REF_ID = TH_REF_ID
-AND TH_STATUS = 'APPROVE'
-AND STH_STATUS = 'APPROVE'	
-AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
-AND ($P{REFID} IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
-UNION
-SELECT DISTINCT 
-STH_EVALUATOR_ID,
-GET_STAFF_NAME(STH_EVALUATOR_ID) EVA_NAME,
-STH_STAFF_ID,
-GET_STAFF_NAME(STH_STAFF_ID) STAFF_NAME,
-TH_TRAINING_TITLE,
-STH_HOD_EVALUATION,
-TO_CHAR(STH_EVALUATION_DATE,'dd/mm/yyyy')EVALUATION_DATE,
-TH_REF_ID,
-TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy')TH_DATE,
-TH_TRAINING_VENUE
-FROM TRAINING_HEAD,STAFF_TRAINING_HEAD,TRAINING_HEAD_DETL,STAFF_TRAINING_DETL,STAFF_MAIN,STAFF_STATUS
-WHERE SM_STAFF_STATUS = SS_STATUS_CODE
-AND SS_STATUS_STS = 'ACTIVE'
-AND STH_STAFF_ID = SM_STAFF_ID
-AND STH_TRAINING_REFID = TH_REF_ID
-AND NVL(THD_EVALUATION,'N') = 'Y'
-AND THD_REF_ID = TH_REF_ID
-AND TH_STATUS = 'APPROVE'
-AND STH_STATUS = 'APPROVE'	
-AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
-AND TO_CHAR(TH_DATE_FROM,'yyyy') >= '2016' 
-AND STD_ATTEND IN ('Y','A')
-AND STH_TRAINING_REFID = STD_TRAINING_REFID
-AND STH_STAFF_ID = STD_STAFF_ID
-AND ($P{REFID} IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
+			<![CDATA[SELECT
+STH_EVALUATOR_ID AS "STH_EVALUATOR_ID",
+EVA_NAME AS "EVA_NAME",
+STH_STAFF_ID AS "STH_STAFF_ID",
+STAFF_NAME AS "STAFF_NAME",
+TH_TRAINING_TITLE AS "TH_TRAINING_TITLE",
+STH_HOD_EVALUATION AS "STH_HOD_EVALUATION",
+EVALUATION_DATE AS "EVALUATION_DATE",
+TH_REF_ID AS "TH_REF_ID",
+TH_DATE AS "TH_DATE",
+TH_TRAINING_VENUE AS "TH_TRAINING_VENUE"
+FROM
+(
+	SELECT DISTINCT 
+	STH_EVALUATOR_ID,
+	GET_STAFF_NAME(STH_EVALUATOR_ID) EVA_NAME,
+	STH_STAFF_ID,
+	GET_STAFF_NAME(STH_STAFF_ID) STAFF_NAME,
+	TH_TRAINING_TITLE,
+	STH_HOD_EVALUATION,
+	TO_CHAR(STH_EVALUATION_DATE,'dd/mm/yyyy')EVALUATION_DATE,
+	TH_REF_ID,
+	TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy')TH_DATE,
+	TH_TRAINING_VENUE
+	FROM TRAINING_HEAD,STAFF_TRAINING_HEAD,TRAINING_HEAD_DETL,STAFF_MAIN,STAFF_STATUS
+	WHERE SM_STAFF_STATUS = SS_STATUS_CODE
+	AND SS_STATUS_STS = 'ACTIVE'
+	AND STH_STAFF_ID = SM_STAFF_ID
+	AND STH_TRAINING_REFID = TH_REF_ID
+	AND COALESCE(THD_EVALUATION,'N') = 'Y'
+	AND THD_REF_ID = TH_REF_ID
+	AND TH_STATUS = 'APPROVE'
+	AND STH_STATUS = 'APPROVE'	
+	AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
+	AND TO_CHAR(TH_DATE_FROM,'yyyy') < '2016' 
+	AND ($P{REFID} IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
+	UNION
+	SELECT DISTINCT 
+	STH_EVALUATOR_ID,
+	GET_STAFF_NAME(STH_EVALUATOR_ID) EVA_NAME,
+	STH_STAFF_ID,
+	GET_STAFF_NAME(STH_STAFF_ID) STAFF_NAME,
+	TH_TRAINING_TITLE,
+	STH_HOD_EVALUATION,
+	TO_CHAR(STH_EVALUATION_DATE,'dd/mm/yyyy')EVALUATION_DATE,
+	TH_REF_ID,
+	TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy')TH_DATE,
+	TH_TRAINING_VENUE
+	FROM TRAINING_HEAD,STAFF_TRAINING_HEAD,TRAINING_HEAD_DETL,STAFF_MAIN,STAFF_STATUS
+	WHERE SM_STAFF_STATUS = SS_STATUS_CODE
+	AND SS_STATUS_STS = 'ACTIVE' 
+	AND STH_STAFF_ID = SM_STAFF_ID
+	AND STH_TRAINING_REFID = TH_REF_ID
+	AND COALESCE(THD_EVALUATION,'N') = 'Y'
+	AND THD_REF_ID = TH_REF_ID
+	AND TH_STATUS = 'APPROVE'
+	AND STH_STATUS = 'APPROVE'	
+	AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
+	AND ($P{REFID} IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
+	UNION
+	SELECT DISTINCT 
+	STH_EVALUATOR_ID,
+	GET_STAFF_NAME(STH_EVALUATOR_ID) EVA_NAME,
+	STH_STAFF_ID,
+	GET_STAFF_NAME(STH_STAFF_ID) STAFF_NAME,
+	TH_TRAINING_TITLE,
+	STH_HOD_EVALUATION,
+	TO_CHAR(STH_EVALUATION_DATE,'dd/mm/yyyy')EVALUATION_DATE,
+	TH_REF_ID,
+	TO_CHAR(TH_DATE_FROM,'dd/mm/yyyy')||' - '||TO_CHAR(TH_DATE_TO,'dd/mm/yyyy')TH_DATE,
+	TH_TRAINING_VENUE
+	FROM TRAINING_HEAD,STAFF_TRAINING_HEAD,TRAINING_HEAD_DETL,STAFF_TRAINING_DETL,STAFF_MAIN,STAFF_STATUS
+	WHERE SM_STAFF_STATUS = SS_STATUS_CODE
+	AND SS_STATUS_STS = 'ACTIVE'
+	AND STH_STAFF_ID = SM_STAFF_ID
+	AND STH_TRAINING_REFID = TH_REF_ID
+	AND COALESCE(THD_EVALUATION,'N') = 'Y'
+	AND THD_REF_ID = TH_REF_ID
+	AND TH_STATUS = 'APPROVE'
+	AND STH_STATUS = 'APPROVE'	
+	AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
+	AND TO_CHAR(TH_DATE_FROM,'yyyy') >= '2016' 
+	AND STD_ATTEND IN ('Y','A')
+	AND STH_TRAINING_REFID = STD_TRAINING_REFID
+	AND STH_STAFF_ID = STD_STAFF_ID
+	AND ($P{REFID} IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
+) AS TBL1
 ORDER BY STH_STAFF_ID]]>
 		</queryString>
 		<field name="STH_EVALUATOR_ID" class="java.lang.String">
@@ -159,11 +173,14 @@ ORDER BY STH_STAFF_ID]]>
 	</subDataset>
 	<subDataset name="SEQ" uuid="e27d2538-a18b-4963-b94f-0c19b6115212">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<parameter name="STAFF_ID" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT TMH_SEQ,TMHS_RECEIVE_BY,TO_CHAR(TMH_SEND_DATE,'dd/mm/yyyy')SEND_DATE
+			<![CDATA[SELECT 
+TMH_SEQ::NUMERIC AS "TMH_SEQ",
+TMHS_RECEIVE_BY AS "TMHS_RECEIVE_BY",
+TO_CHAR(TMH_SEND_DATE,'dd/mm/yyyy') AS "SEND_DATE"
 FROM TRAINING_MEMO_HISTORY,TRAINING_MEMO_HIS_STAFF
 WHERE TMH_MEMO_ID = TMHS_MEMO_ID
 AND TMH_TRAINING_REFID = $P{REFID} 
@@ -178,6 +195,7 @@ ORDER BY TMH_SEQ]]>
 		</field>
 		<field name="TMHS_RECEIVE_BY" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="TMHS_RECEIVE_BY"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="training_memo_his_staff"/>
 		</field>
 		<field name="SEND_DATE" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="SEND_DATE"/>
@@ -185,8 +203,11 @@ ORDER BY TMH_SEQ]]>
 	</subDataset>
 	<parameter name="REFID" class="java.lang.String"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT * FROM DUAL]]>
+		<![CDATA[SELECT '' AS "DUMMY"]]>
 	</queryString>
+	<field name="DUMMY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DUMMY"/>
+	</field>
 	<variable name="C_TITLE" class="java.lang.String"/>
 	<variable name="C_DATE" class="java.lang.String"/>
 	<variable name="C_VENUE" class="java.lang.String"/>

@@ -179,7 +179,7 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(STH_STAFF_ID) AS "COUNT_SUBMIT", '' AS "DUMMY" FROM
+			<![CDATA[SELECT COUNT(STH_STAFF_ID)::numeric AS "COUNT_SUBMIT", '' AS "DUMMY" FROM
 (
     SELECT STH_STAFF_ID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
@@ -211,7 +211,7 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     AND STD_ATTEND IN ('Y','A')
 ) AS TBL1]]>
 		</queryString>
-		<field name="COUNT_SUBMIT" class="java.lang.Long">
+		<field name="COUNT_SUBMIT" class="java.math.BigDecimal">
 			<property name="com.jaspersoft.studio.field.label" value="COUNT_SUBMIT"/>
 		</field>
 		<field name="DUMMY" class="java.lang.String">
@@ -228,7 +228,7 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
 		<parameter name="MONTH2" class="java.lang.String"/>
 		<parameter name="YEAR" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT COUNT(STH_STAFF_ID) AS "COUNT_NOT_SUBMIT", '' AS "DUMMY" FROM
+			<![CDATA[SELECT COUNT(STH_STAFF_ID)::numeric AS "COUNT_NOT_SUBMIT", '' AS "DUMMY" FROM
 (
     SELECT STH_STAFF_ID
     FROM STAFF_TRAINING_HEAD,TRAINING_HEAD
@@ -260,7 +260,7 @@ AND ($P{YEAR} IS NULL OR ($P{YEAR} IS NOT NULL AND TO_CHAR(TH_DATE_FROM,'yyyy') 
     AND STD_ATTEND IN ('Y','A')
 ) AS TBL1]]>
 		</queryString>
-		<field name="COUNT_NOT_SUBMIT" class="java.lang.Long">
+		<field name="COUNT_NOT_SUBMIT" class="java.math.BigDecimal">
 			<property name="com.jaspersoft.studio.field.label" value="COUNT_NOT_SUBMIT"/>
 		</field>
 		<field name="DUMMY" class="java.lang.String">
