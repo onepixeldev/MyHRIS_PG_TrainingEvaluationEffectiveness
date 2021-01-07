@@ -37,6 +37,8 @@
 	<subDataset name="LIST" uuid="efc877fc-0a7d-4b77-9d2f-e4b62fa230fa">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyHRIS_PG"/>
+		<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="630"/>
+		<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="360"/>
 		<parameter name="REFID" class="java.lang.String"/>
 		<queryString language="SQL">
 			<![CDATA[SELECT 
@@ -82,7 +84,7 @@ PREC3::NUMERIC AS "PREC3"
 	AND STH_STATUS = 'APPROVE'
 	AND TH_INTERNAL_EXTERNAL <> 'EXTERNAL_AGENCY'
 	AND TO_CHAR(TH_DATE_FROM,'yyyy') < '2016'
-	AND ($P{REFID}  IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
+	AND (($P{REFID}  IS NULL OR $P{REFID} = '') OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
 	AND STH_SUBMIT_DATE IS NOT NULL
 	UNION
 	SELECT STH_STAFF_ID,SM_STAFF_NAME||' ('||STH_STAFF_ID||')' SM_STAFF_NAME,
@@ -98,7 +100,7 @@ PREC3::NUMERIC AS "PREC3"
 	AND TH_STATUS = 'APPROVE'
 	AND STH_STATUS = 'APPROVE'
 	AND TH_INTERNAL_EXTERNAL = 'EXTERNAL_AGENCY'
-	AND ($P{REFID} IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
+	AND (($P{REFID} IS NULL OR $P{REFID} = '') OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
 	AND STH_SUBMIT_DATE IS NOT NULL
 	UNION
 	SELECT STH_STAFF_ID,SM_STAFF_NAME||' ('||STH_STAFF_ID||')' SM_STAFF_NAME,
@@ -118,7 +120,7 @@ PREC3::NUMERIC AS "PREC3"
 	AND STH_TRAINING_REFID = STD_TRAINING_REFID
 	AND STH_STAFF_ID = STD_STAFF_ID
 	AND STD_ATTEND IN ('Y','A')
-	AND ($P{REFID} IS NULL OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
+	AND (($P{REFID} IS NULL OR $P{REFID} = '') OR ($P{REFID} IS NOT NULL AND TH_REF_ID = $P{REFID}))
 	AND STH_SUBMIT_DATE IS NOT NULL
 	ORDER BY SM_STAFF_NAME
 ) AS TBL1
